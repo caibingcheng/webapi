@@ -12,6 +12,7 @@ app = Flask(__name__)
 LCID = os.environ.get("APPID", default=None)
 LCKEY = os.environ.get("APPKEY", default=None)
 
+
 if not (LCID and LCKEY):
     raise RuntimeError(
         "You should set environment variables `APPID` and `APPKEY` first! "
@@ -24,6 +25,13 @@ dog = leancloud.Object.extend("Dog")
 dog_query = dog.query
 dog_query.select('content')
 dog_max = dog_query.count()
+
+def _js(msg):
+    return "document.write('" + msg + "');"
+def _json(msg):
+    return jsonify({"data": str(msg).encode("utf-8")})
+def _text(msg):
+    return msg
 
 @app.route("/dog", methods=["GET", "POST"])
 def dog_get():
@@ -39,12 +47,12 @@ def dog_get():
     dog_msg = dog_msg.encode("utf-8").decode("utf-8")
 
     dog_return = {
-        "js": "document.write('" + dog_msg + "');",
-        "json": jsonify({"data": str(dog_msg).encode("utf-8")}),
-        "text": dog_msg
+        "js": _js,
+        "json": _json,
+        "text": _text
     }
 
-    return dog_return[dog_method]
+    return dog_return[dog_method](dog_msg)
 
 if __name__ == "__main__":
     app.run()
