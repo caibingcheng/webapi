@@ -27,16 +27,19 @@ if not (LCID and LCKEY):
 leancloud.init(LCID, LCKEY)
 
 
-def _js(msg):
-    return "document.write('" + str(msg) + "');"
+def _js(**args):
+    if "id" in args.keys():
+        return "document.getElementById('" + args["id"] + "').innerText='" + str(args["msg"]) + "';"
+    else:
+        return "document.write('" + str(args["msg"]) + "');"
 
 
-def _json(msg):
-    return jsonify({"data": str(msg)})
+def _json(**args):
+    return jsonify({"data": str(args["msg"])})
 
 
-def _text(msg):
-    return str(msg)
+def _text(**args):
+    return str(args["msg"])
 
 
 at_return = {
@@ -72,12 +75,14 @@ def dog_get():
     if not dog_count.isdigit():
         abort(400)
 
+    dog_identify = args.get("identify") if "identify" in args.keys() else ""
+
     dog_msg = Dog.dog_get(int(dog_count))
 
-    if "method" not in args.keys() and "count" not in args.keys():
-        return render_template("dog.html", dog_msg=dog_msg)
-
-    return at_return[dog_method](dog_msg)
+    for key in {"method", "count", "identify"}:
+        if key in args.keys():
+            return at_return[dog_method](msg=dog_msg, id=dog_identify)
+    return render_template("dog.html", dog_msg=dog_msg)
 
 
 if __name__ == "__main__":
