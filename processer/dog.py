@@ -8,7 +8,7 @@ class Dog():
         self.dog_query.select('content')
         self.dog_max = self.dog_query.count()
 
-    def dog_getone(self, counts):
+    def dog_get(self, counts):
         if counts < 1:
             counts = 1
         elif counts > self.dog_max:

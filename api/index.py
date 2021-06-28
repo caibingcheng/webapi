@@ -1,13 +1,17 @@
 # coding=UTF-8
 
-from processer import dog
-import random
-import os
-import sys
+from flask import Flask, request, jsonify, abort, render_template
 import leancloud
-from flask import Flask, request, jsonify, abort
+import sys
+import os
+import random
 
-app = Flask(__name__)
+root_path = os.path.abspath(__file__)
+root_path = '/'.join(root_path.split('/')[:-2])
+sys.path.append(root_path)
+from processer import dog
+
+app = Flask(__name__, template_folder="../templates")
 
 LCID = os.environ.get("APPID", default=None)
 LCKEY = os.environ.get("APPKEY", default=None)
@@ -41,10 +45,6 @@ at_return = {
     "text": _text
 }
 
-root_path = os.path.abspath(__file__)
-root_path = '/'.join(root_path.split('/')[:-2])
-sys.path.append(root_path)
-
 Dog = dog.Dog(leancloud)
 
 
@@ -60,7 +60,11 @@ def dog_get():
     if not dog_count.isdigit():
         abort(400)
 
-    dog_msg = Dog.dog_getone(int(dog_count))
+    dog_msg = Dog.dog_get(int(dog_count))
+
+    if "method" not in args.keys() and "count" not in args.keys():
+        return render_template("dog.html", dog_msg=dog_msg)
+
     return at_return[dog_method](dog_msg)
 
 
