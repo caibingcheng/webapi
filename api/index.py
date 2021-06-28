@@ -45,7 +45,19 @@ at_return = {
     "text": _text
 }
 
-Dog = dog.Dog(leancloud)
+
+@app.route("/user/<type>", methods=["GET", "POST"])
+def login(type):
+    if type == "login":
+        pass
+    elif type == "register":
+        pass
+    else:
+        pass
+    pass
+
+
+Dog = dog.Dog(leancloud, 100)
 
 
 @app.route("/dog", methods=["GET", "POST"])
