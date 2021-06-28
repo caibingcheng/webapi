@@ -28,6 +28,15 @@
         font-size: 1.3rem;
         color: #fff;
     }
+
+    div.next-dog {
+        padding: 1rem 1rem;
+        margin: 0 auto;
+        font-size: 1.5rem;
+        font-weight: bolder;
+        color: #fff;
+        cursor: pointer;
+    }
 </style>
 
 <body>
@@ -38,6 +47,9 @@
         <p>
             {{ dog_msg }}
         </p>
+    </div>
+    <div class="next-dog" style="text-align:center" onclick="javascript:location.reload();">
+        再来一条
     </div>
 </body>
 
