@@ -1,10 +1,9 @@
 # coding=UTF-8
 
-from flask import Flask, request, jsonify, abort, render_template
+from flask import Flask, request, json, abort, render_template
 import leancloud
 import sys
 import os
-import random
 
 root_path = os.path.abspath(__file__)
 root_path = '/'.join(root_path.split('/')[:-2])
@@ -35,7 +34,7 @@ def _js(**args):
 
 
 def _json(**args):
-    return jsonify({"data": str(args["msg"])})
+    return json.dumps({"data": str(args["msg"])}, ensure_ascii=False)
 
 
 def _text(**args):
