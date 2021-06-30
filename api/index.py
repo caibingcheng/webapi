@@ -28,7 +28,7 @@ leancloud.init(LCID, LCKEY)
 
 
 def _js(**args):
-    if "id" in args.keys():
+    if args["id"] != "":
         return "document.getElementById('" + args["id"] + "').innerText='" + str(args["msg"]) + "';"
     else:
         return "document.write('" + str(args["msg"]) + "');"
