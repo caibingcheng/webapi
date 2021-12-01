@@ -1,29 +1,17 @@
 # coding=UTF-8
 
 from flask import Flask, request, json, abort, render_template
-import leancloud
 import sys
 import os
 
 root_path = os.path.abspath(__file__)
 root_path = '/'.join(root_path.split('/')[:-2])
 sys.path.append(root_path)
-from processer import dog
+from processer import dog, uptimerobot
 
 app = Flask(__name__, template_folder="../templates")
-
-LCID = os.environ.get("APPID", default=None)
-LCKEY = os.environ.get("APPKEY", default=None)
-
-
-if not (LCID and LCKEY):
-    raise RuntimeError(
-        "You should set environment variables `APPID` and `APPKEY` first! "
-        "Please read README of repo."
-    )
-
-# init
-leancloud.init(LCID, LCKEY)
+Dog = dog.Dog(100)
+UptimeRobot = uptimerobot.UptimeRobot()
 
 
 def _js(**args):
@@ -59,9 +47,6 @@ def login(type):
     pass
 
 
-Dog = dog.Dog(leancloud, 100)
-
-
 @app.route("/dog", methods=["GET", "POST"])
 def dog_get():
     args = request.args if request.method == "GET" else request.form
@@ -82,6 +67,13 @@ def dog_get():
         if key in args.keys():
             return at_return[dog_method](msg=dog_msg, id=dog_identify)
     return render_template("dog.html", dog_msg=dog_msg)
+
+
+@app.route("/uptimerobot", methods=["GET", "POST"])
+def uptimerobot_get():
+    args = request.args if request.method == "GET" else request.form
+    result = at_return['json'](msg=UptimeRobot.get())
+    return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
 
 
 if __name__ == "__main__":

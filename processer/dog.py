@@ -1,18 +1,42 @@
 import random
+import os
+import leancloud
+from .utils import BufferManager
+
+LCID = os.environ.get("APPID", default=None)
+LCKEY = os.environ.get("APPKEY", default=None)
+
+if not (LCID and LCKEY):
+    raise RuntimeError(
+        "You should set environment variables `APPID` and `APPKEY` first! "
+        "Please read README of repo."
+    )
+
+# init
+leancloud.init(LCID, LCKEY)
 
 
 class Dog():
-    def __init__(self, leancloud, size=100):
+    def __init__(self, size=100):
+        self.buffer_manager = BufferManager(name=self.__str__, timeout=300)
+        self.dog_size = size
+
+        def _dog_getter(self):
+            self._dog_query()
+            return (self.dog_size, self.dog_set)
+
+        self.buffer_manager.set_getter(_dog_getter)
+
+    def _dog_query(self):
         self.dog = leancloud.Object.extend("Dog")
         self.dog_query = self.dog.query
         self.dog_query.select('content')
         self.dog_max = self.dog_query.count()
-        self.dog_size = size
-        self.dog_set = set(self.__dog_get(self.dog_size))
+        self.dog_set = set(self._dog_get(self.dog_size))
         self.dog_size = len(self.dog_set)
         self.dog_async = False if self.dog_size >= self.dog_max else True
 
-    def __dog_get(self, counts):
+    def _dog_get(self, counts):
         if counts < 1:
             counts = 1
         elif counts > self.dog_max:
@@ -30,6 +54,7 @@ class Dog():
         return dog_msg
 
     def dog_get(self, counts):
+        self.dog_size, self.dog_set = self.buffer_manager.update(self)
         if counts < 1:
             counts = 1
         elif counts > self.dog_size:
