@@ -7,11 +7,13 @@ import os
 root_path = os.path.abspath(__file__)
 root_path = '/'.join(root_path.split('/')[:-2])
 sys.path.append(root_path)
-from processer import dog, uptimerobot
+from processer import dog, uptimerobot, bdtongji, gist
 
 app = Flask(__name__, template_folder="../templates")
 Dog = dog.Dog(100)
 UptimeRobot = uptimerobot.UptimeRobot()
+# BDTongji = bdtongji.BDTongji()
+Gist = gist.Gist()
 
 
 def _js(**args):
@@ -73,6 +75,25 @@ def dog_get():
 def uptimerobot_get():
     args = request.args if request.method == "GET" else request.form
     result = at_return['json'](msg=UptimeRobot.get())
+    return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
+
+
+# @app.route("/bdtongji", methods=["GET", "POST"])
+# def bdtongji_get():
+#     args = request.args if request.method == "GET" else request.form
+#     has_code = 'code' in args.keys()
+#     if has_code:
+#         result = at_return['json'](msg=args.get("code"))
+#         return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
+#     result = at_return['json'](msg=BDTongji.get())
+#     return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
+
+
+@app.route("/gistfriend", methods=["GET", "POST"])
+def gistfriend_get():
+    args = request.args if request.method == "GET" else request.form
+    gistfriend_url = "https://gist.githubusercontent.com/caibingcheng/2515bc064b4043c4e1b858cac70e3ad6/raw/friends.json"
+    result = at_return['json'](msg=Gist.get(gistfriend_url))
     return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
 
 

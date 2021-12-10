@@ -1,8 +1,15 @@
 import time
+import hashlib
 
 
 def timestamp_s():
     return int(round(time.time()))
+
+
+def hashstr(strs):
+    md5 = hashlib.md5()
+    md5.update(strs.encode('utf-8'))
+    return md5.hexdigest()
 
 
 class BufferManager():
