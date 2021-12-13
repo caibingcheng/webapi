@@ -1,19 +1,24 @@
 # coding=UTF-8
 
 from flask import Flask, request, json, abort, render_template
+from flaskext.markdown import Markdown
 import sys
 import os
 
 root_path = os.path.abspath(__file__)
 root_path = '/'.join(root_path.split('/')[:-2])
 sys.path.append(root_path)
-from processer import dog, uptimerobot, bdtongji, gist
+from processer import dog, uptimerobot, bdtongji, gist, utils
+
 
 app = Flask(__name__, template_folder="../templates")
+Markdown(app, extensions=['fenced_code'])
+
 Dog = dog.Dog(100)
 UptimeRobot = uptimerobot.UptimeRobot()
 # BDTongji = bdtongji.BDTongji()
 Gist = gist.Gist()
+About = utils.markdown("./README.md", locale=True)
 
 
 def _js(**args):
@@ -36,6 +41,12 @@ at_return = {
     "json": _json,
     "text": _text
 }
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    return render_template('index.html',
+                           data=About)
 
 
 @app.route("/user/<type>", methods=["GET", "POST"])

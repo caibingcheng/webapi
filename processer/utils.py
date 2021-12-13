@@ -1,5 +1,6 @@
 import time
 import hashlib
+import requests
 
 
 def timestamp_s():
@@ -10,6 +11,14 @@ def hashstr(strs):
     md5 = hashlib.md5()
     md5.update(strs.encode('utf-8'))
     return md5.hexdigest()
+
+
+def markdown(path, locale=True):
+    if locale:
+        with open(path, 'r') as f:
+            return f.read()
+    else:
+        return requests.get(path).text
 
 
 class BufferManager():
