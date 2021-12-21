@@ -8,7 +8,7 @@ import os
 root_path = os.path.abspath(__file__)
 root_path = '/'.join(root_path.split('/')[:-2])
 sys.path.append(root_path)
-from processer import dog, uptimerobot, bdtongji, gist, utils
+from processer import dog, uptimerobot, bdtongji, gist, utils, n2s
 
 
 app = Flask(__name__, template_folder="../templates")
@@ -105,6 +105,15 @@ def gistfriend_get():
     args = request.args if request.method == "GET" else request.form
     gistfriend_url = "https://gist.githubusercontent.com/caibingcheng/2515bc064b4043c4e1b858cac70e3ad6/raw/friends.json"
     result = at_return['json'](msg=Gist.get(gistfriend_url))
+    return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
+
+
+@app.route("/n2s", methods=["GET", "POST"])
+def n2s_get():
+    args = request.args if request.method == "GET" else request.form
+    source = args.get("source") if "source" in args.keys() else ""
+    split = args.get("split") if "split" in args.keys() else " "
+    result = at_return['text'](msg=n2s.N2S().parse(source, split))
     return "{}({})".format(args.get("jsoncallback"), result) if "jsoncallback" in args.keys() else result
 
 
