@@ -69,3 +69,21 @@ curl "https://api.bbing.com.cn/dog?method=text&count=2"
 自用.
 
 返回gist, 60s更新一次, 用于加速国内访问时获取blog友链列表, 详细见[友链](https://www.bbing.com.cn/friends/).
+
+## n2s
+
+将ascii码转化为对应的字符.
+
+| 参数 | 值域 | 作用 | 默认 |
+|---|---|---|---|
+| source | 数字(列表) | 待解析的ascii码 | "" |
+| split | 字符 | 上述数字列表的分割符 | " " |
+
+例如:
+```Shell
+curl "https://api.bbing.com.cn/n2s?source=65|66|\&split=|"
+```
+输出:
+```Shell
+AB
+```
