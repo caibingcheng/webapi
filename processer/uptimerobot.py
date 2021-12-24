@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-from .utils import BufferManager
+from buffercache import BufferCache
 
 
 class UptimeRobot():
@@ -9,7 +9,7 @@ class UptimeRobot():
         self._url = "https://api.uptimerobot.com/v2/getMonitors"
         self._key = os.environ.get("UPTIMEROBOT_READONLY_KEY", default=None)
         self._status = None
-        self._buffer_manager = BufferManager(name=self.__str__, timeout=300)
+        self._buffer_manager = BufferCache(timeout=300000)
 
         def _get(self):
             return self._get()
@@ -33,5 +33,5 @@ class UptimeRobot():
         return monitors
 
     def get(self):
-        self._status = self._buffer_manager.update(self)
+        self._status = self._buffer_manager.update(self).get()
         return self._status
